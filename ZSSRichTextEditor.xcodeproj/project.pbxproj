@@ -565,7 +565,8 @@
 				ORGANIZATIONNAME = "Zed Said Studio";
 				TargetAttributes = {
 					4581EB7B184845790048CAB0 = {
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = GT496M7LMJ;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -776,14 +777,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = GT496M7LMJ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZSSRichTextEditor/ZSSRichTextEditor-Prefix.pch";
 				INFOPLIST_FILE = "ZSSRichTextEditor/ZSSRichTextEditor-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zedsaid.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.szy.ZSSRichTextEditor;
 				PRODUCT_NAME = ZSSRichTextEditor;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Adhoc;
@@ -880,14 +882,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = GT496M7LMJ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZSSRichTextEditor/ZSSRichTextEditor-Prefix.pch";
 				INFOPLIST_FILE = "ZSSRichTextEditor/ZSSRichTextEditor-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zedsaid.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.szy.ZSSRichTextEditor;
 				PRODUCT_NAME = ZSSRichTextEditor;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -899,14 +902,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = GT496M7LMJ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZSSRichTextEditor/ZSSRichTextEditor-Prefix.pch";
 				INFOPLIST_FILE = "ZSSRichTextEditor/ZSSRichTextEditor-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zedsaid.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.szy.ZSSRichTextEditor;
 				PRODUCT_NAME = ZSSRichTextEditor;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

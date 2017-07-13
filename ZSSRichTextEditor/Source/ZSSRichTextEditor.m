@@ -1345,13 +1345,20 @@ static CGFloat kDefaultScale = 0.5;
     
     NSString *trigger = [NSString stringWithFormat:@"zss_editor.insertLink(\"%@\", \"%@\");", url, title];
     [self.editorView stringByEvaluatingJavaScriptFromString:trigger];
-    
+    //
+    if (_receiveEditorDidChangeEvents) {
+        [self editorDidChangeWithText:[self getText] andHTML:[self getHTML]];
+    }
 }
 
 
 - (void)updateLink:(NSString *)url title:(NSString *)title {
     NSString *trigger = [NSString stringWithFormat:@"zss_editor.updateLink(\"%@\", \"%@\");", url, title];
     [self.editorView stringByEvaluatingJavaScriptFromString:trigger];
+    
+    if (_receiveEditorDidChangeEvents) {
+        [self editorDidChangeWithText:[self getText] andHTML:[self getHTML]];
+    }
 }
 
 
@@ -1391,10 +1398,18 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)removeLink {
     [self.editorView stringByEvaluatingJavaScriptFromString:@"zss_editor.unlink();"];
+    
+    if (_receiveEditorDidChangeEvents) {
+        [self editorDidChangeWithText:[self getText] andHTML:[self getHTML]];
+    }
 }
 
 - (void)quickLink {
     [self.editorView stringByEvaluatingJavaScriptFromString:@"zss_editor.quickLink();"];
+    
+    if (_receiveEditorDidChangeEvents) {
+        [self editorDidChangeWithText:[self getText] andHTML:[self getHTML]];
+    }
 }
 
 - (void)insertImage {
@@ -1709,16 +1724,17 @@ static CGFloat kDefaultScale = 0.5;
      Callback for when text is changed, solution posted by richardortiz84 https://github.com/nnhubbard/ZSSRichTextEditor/issues/5
      
      */
+    __weak typeof(self) weakself = self;
     JSContext *ctx = [webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     ctx[@"contentUpdateCallback"] = ^(JSValue *msg) {
         
         if (_receiveEditorDidChangeEvents) {
             
-            [self editorDidChangeWithText:[self getText] andHTML:[self getHTML]];
+            [weakself editorDidChangeWithText:[weakself getText] andHTML:[weakself getHTML]];
             
         }
         
-        [self checkForMentionOrHashtagInText:[self getText]];
+        [weakself checkForMentionOrHashtagInText:[weakself getText]];
         
     };
     [ctx evaluateScript:@"document.getElementById('zss_editor_content').addEventListener('input', contentUpdateCallback, false);"];
@@ -1915,25 +1931,40 @@ static CGFloat kDefaultScale = 0.5;
 - (void)keyboardWillShowOrHide:(NSNotification *)notification {
     
     // Orientation
-    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    //UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     
     // User Info
     NSDictionary *info = notification.userInfo;
     CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     int curve = [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    //CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     // Toolbar Sizes
     CGFloat sizeOfToolbar = self.toolbarHolder.frame.size.height;
     
     // Keyboard Size
+    // fix for external keyboard
     //Checks if IOS8, gets correct keyboard height
-    CGFloat keyboardHeight = UIInterfaceOrientationIsLandscape(orientation) ? ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.000000) ? keyboardEnd.size.height : keyboardEnd.size.width : keyboardEnd.size.height;
+    //    CGFloat keyboardHeight = UIInterfaceOrientationIsLandscape(orientation) ? ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.000000) ? keyboardEnd.size.height : keyboardEnd.size.width : keyboardEnd.size.height;
+    //
+    
+    CGFloat keyboardHeight;
+    NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+    //NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    CGRect keyboardFrame = [kbFrame CGRectValue];
+    CGRect finalKeyboardFrame = [self.view convertRect:keyboardFrame fromView:self.view.window];
+    //int kbHeight;;
+    CGFloat height = self.view.frame.size.height;
+    if ((finalKeyboardFrame.origin.y + finalKeyboardFrame.size.height) > height) {
+        keyboardHeight = sizeOfToolbar+10;
+    }else{
+        keyboardHeight = finalKeyboardFrame.size.height;
+    }
     
     // Correct Curve
     UIViewAnimationOptions animationOptions = curve << 16;
     
-    const int extraHeight = 10;
+    const int extraHeight = 0;
     
     if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
