@@ -1941,34 +1941,23 @@ static CGFloat kDefaultScale = 0.5;
     NSDictionary *info = notification.userInfo;
     CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     int curve = [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    //CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    // convert from screen coordinates to self.view coordinates, as the bottom of self.view might not be at the bottom of the view
+    // also rotates the coordinates correctly in iOS<8
+    CGRect keyboardEndInView = [self.view convertRect:keyboardEnd fromView:nil];
     
     // Toolbar Sizes
     CGFloat sizeOfToolbar = self.toolbarHolder.frame.size.height;
-    
+
     // Keyboard Size
-    // fix for external keyboard
-    //Checks if IOS8, gets correct keyboard height
-    //    CGFloat keyboardHeight = UIInterfaceOrientationIsLandscape(orientation) ? ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.000000) ? keyboardEnd.size.height : keyboardEnd.size.width : keyboardEnd.size.height;
-    //
-    
-    CGFloat keyboardHeight;
-    NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
-    //NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    CGRect keyboardFrame = [kbFrame CGRectValue];
-    CGRect finalKeyboardFrame = [self.view convertRect:keyboardFrame fromView:self.view.window];
-    //int kbHeight;;
-    CGFloat height = self.view.frame.size.height;
-    if ((finalKeyboardFrame.origin.y + finalKeyboardFrame.size.height) > height) {
-        keyboardHeight = sizeOfToolbar+10;
-    }else{
-        keyboardHeight = finalKeyboardFrame.size.height;
-    }
-    
+    CGFloat keyboardTopYInView = keyboardEndInView.origin.y;
+    keyboardTopYInView = MAX(0, keyboardTopYInView);
+
     // Correct Curve
     UIViewAnimationOptions animationOptions = curve << 16;
     
-    const int extraHeight = 0;
+    const int extraHeight = 10;
     
     if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
@@ -1976,12 +1965,12 @@ static CGFloat kDefaultScale = 0.5;
             
             // Toolbar
             CGRect frame = self.toolbarHolder.frame;
-            frame.origin.y = self.view.frame.size.height - (keyboardHeight + sizeOfToolbar);
+            frame.origin.y = keyboardTopYInView - sizeOfToolbar;
             self.toolbarHolder.frame = frame;
             
             // Editor View
             CGRect editorFrame = self.editorView.frame;
-            editorFrame.size.height = (self.view.frame.size.height - keyboardHeight) - sizeOfToolbar - extraHeight;
+            editorFrame.size.height = keyboardTopYInView - sizeOfToolbar - extraHeight;
             self.editorView.frame = editorFrame;
             self.editorViewFrame = self.editorView.frame;
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
@@ -1989,11 +1978,11 @@ static CGFloat kDefaultScale = 0.5;
             
             // Source View
             CGRect sourceFrame = self.sourceView.frame;
-            sourceFrame.size.height = (self.view.frame.size.height - keyboardHeight) - sizeOfToolbar - extraHeight;
+            sourceFrame.size.height = keyboardTopYInView - sizeOfToolbar - extraHeight;
             self.sourceView.frame = sourceFrame;
             
             // Provide editor with keyboard height and editor view height
-            [self setFooterHeight:(keyboardHeight - 8)];
+            [self setFooterHeight:(self.view.frame.size.height - keyboardTopYInView - 8)];
             [self setContentHeight: self.editorViewFrame.size.height];
             
         } completion:nil];
@@ -2007,7 +1996,7 @@ static CGFloat kDefaultScale = 0.5;
             if (_alwaysShowToolbar) {
                 frame.origin.y = self.view.frame.size.height - sizeOfToolbar;
             } else {
-                frame.origin.y = self.view.frame.size.height + keyboardHeight;
+                frame.origin.y = keyboardTopYInView;
             }
             
             self.toolbarHolder.frame = frame;
