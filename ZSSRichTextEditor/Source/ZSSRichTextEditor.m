@@ -1934,9 +1934,6 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)keyboardWillShowOrHide:(NSNotification *)notification {
     
-    // Orientation
-    //UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-    
     // User Info
     NSDictionary *info = notification.userInfo;
     CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
